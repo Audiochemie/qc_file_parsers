@@ -10,7 +10,7 @@ enum Line {
 
 
 ///Collects different geometry file formats used in quantum chemistry
-enum GeometryFormat {
+pub enum GeometryFormat {
     /// The _classic_ cartesian xyz file .
    Xyz,
 }
