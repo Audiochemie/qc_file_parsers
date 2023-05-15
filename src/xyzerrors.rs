@@ -1,7 +1,7 @@
 use std::error;
 use std::{fmt::Display, num::ParseFloatError, num::ParseIntError};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum ParseXYZError {
     EmptyLine,
     WrongHeaderError(ParseIntError),
@@ -40,5 +40,12 @@ impl error::Error for ParseXYZError {
 impl From<ParseIntError> for ParseXYZError {
     fn from(value: ParseIntError) -> Self {
         Self::WrongHeaderError(value)
+    }
+}
+
+
+impl From<ParseFloatError> for ParseXYZError {
+    fn from(value: ParseFloatError) -> Self {
+       Self::CoordinateError(value) 
     }
 }
