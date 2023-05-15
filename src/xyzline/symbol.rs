@@ -1,16 +1,19 @@
+use crate::xyzerrors::ParseXYZError;
+
 use super::numeric::XYZLineNumeric;
 
 pub const PSE_SYMBOLS: [&str; 11] = ["", "h", "he", "li", "be", "b", "c", "n", "o", "f", "ne"];
 
 /// Represents a line in an xyz file containing an element symbol and a triple of cartesian
 /// coordinates.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct XYZLineSymbol {
     /// The symbol
-    symbol: String,
+    pub symbol: String,
     /// The coordinate triple
-    xyz: (f32, f32, f32),
+    pub xyz: (f32, f32, f32),
 }
+
 
 impl PartialEq for XYZLineSymbol {
     fn eq(&self, other: &Self) -> bool {
@@ -19,36 +22,48 @@ impl PartialEq for XYZLineSymbol {
 }
 
 impl XYZLineSymbol {
-    pub fn new(symbol: &str, x: f32, y: f32, z: f32) -> Self {
-        XYZLineSymbol {
-            symbol: symbol.to_string(),
+    pub fn new(line: String) -> Result<Self, ParseXYZError> {
+        let mut split_line = line.split(' ');
+        let symbol = split_line.next().unwrap().to_string();
+        let x = split_line.next().unwrap().parse::<f32>()?;
+        let y = split_line.next().unwrap().parse::<f32>()?;
+        let z = split_line.next().unwrap().parse::<f32>()?;
+        Ok(Self{
+            symbol,
+            xyz: (x, y, z),
+        })
+    }
+}
+
+impl From<String> for XYZLineSymbol {
+    fn from(value: String) -> Self {
+        let mut split_line = value.split(' ');
+        let symbol = split_line.next().unwrap().to_string();
+        let x = split_line.next().unwrap().parse::<f32>().unwrap();
+        let y = split_line.next().unwrap().parse::<f32>().unwrap();
+        let z = split_line.next().unwrap().parse::<f32>().unwrap();
+        Self{
+            symbol,
             xyz: (x, y, z),
         }
     }
+
 }
 
-trait ToNumeric {
-    fn to_numeric(self) -> XYZLineNumeric;
-}
-
-impl ToNumeric for XYZLineSymbol {
-    fn to_numeric(self) -> XYZLineNumeric {
-        let z_value = PSE_SYMBOLS
-            .iter()
-            .position(|&symbol| symbol == self.symbol)
-            .unwrap();
-        let (x, y, z) = self.xyz;
-        XYZLineNumeric::new(z_value, x, y, z)
+impl From<XYZLineNumeric> for XYZLineSymbol {
+    fn from(value: XYZLineNumeric) -> Self {
+        Self {symbol: PSE_SYMBOLS[value.z_value].to_string(), xyz: value.xyz }
     }
+    
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     #[test]
-    fn test_to_numeric() {
-        let test_line = XYZLineSymbol::new("he", 0.0_f32, 0.0_f32, 0.0_f32);
-        let expected = XYZLineNumeric::new(2, 0.0_f32, 0.0_f32, 0.0_f32);
-        assert_eq!(expected, test_line.to_numeric())
+    fn test_from_numeric() {
+        let test = XYZLineNumeric::from("2 0.0 0.0 0.0".to_string());
+        let expected = XYZLineSymbol::from("he 0.0 0.0 0.0".to_string());
+        assert_eq!(expected.xyz, XYZLineSymbol::from(test).xyz);
     }
 }
