@@ -27,7 +27,7 @@ impl Eq for XYZLineSymbol {}
 impl XYZLineSymbol {
     pub fn new(line: String) -> Result<Self, ParseXYZError> {
         let mut split_line = line.split_whitespace();
-        let symbol = split_line.next().unwrap().to_string();
+        let symbol = split_line.next().unwrap().to_lowercase();
         let x = split_line.next().unwrap().parse::<f32>()?;
         let y = split_line.next().unwrap().parse::<f32>()?;
         let z = split_line.next().unwrap().parse::<f32>()?;

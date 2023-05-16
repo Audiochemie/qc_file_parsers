@@ -5,13 +5,7 @@ use xyzline::{numeric::XYZLineNumeric, symbol::XYZLineSymbol};
 pub mod xyzerrors;
 pub mod xyzline;
 
-///Collects different geometry file formats used in quantum chemistry
-pub enum GeometryFormat {
-    /// The _classic_ cartesian xyz file.
-    Xyz(Xyz),
-}
-
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum XyzLine {
     Symbolic(xyzline::symbol::XYZLineSymbol),
     Numeric(xyzline::numeric::XYZLineNumeric),
@@ -66,7 +60,6 @@ impl Xyz {
                 }
             },
         }
-
         Ok(Self {
             number_of_atoms,
             distances_in: String::from(distances_in),

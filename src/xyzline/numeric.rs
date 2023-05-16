@@ -4,7 +4,7 @@ use crate::xyzerrors::ParseXYZError;
 use super::symbol::XYZLineSymbol;
 use super::symbol::PSE_SYMBOLS;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct XYZLineNumeric {
     pub z_value: usize,
     pub xyz: Point3<f32>,
