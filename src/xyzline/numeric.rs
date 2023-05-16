@@ -12,7 +12,7 @@ pub struct XYZLineNumeric {
 impl XYZLineNumeric {
     pub fn new(line: String) -> Result<Self, ParseXYZError> {
         // First we split the string by white spaces.
-        let mut split_line = line.split(' ');
+        let mut split_line = line.split_whitespace();
         let z_value = split_line.next().unwrap().parse::<usize>()?;
         let x = split_line.next().unwrap().parse::<f32>()?;
         let y = split_line.next().unwrap().parse::<f32>()?;
@@ -30,10 +30,12 @@ impl PartialEq for XYZLineNumeric {
     }
 }
 
+impl Eq for XYZLineNumeric {}
+
 impl From<String> for XYZLineNumeric {
     fn from(line: String) -> Self {
         // First we split the string by white spaces.
-        let mut split_line = line.split(' ');
+        let mut split_line = line.split_whitespace();
         let z_value = split_line.next().unwrap().parse::<usize>().unwrap();
         let x = split_line.next().unwrap().parse::<f32>().unwrap();
         let y = split_line.next().unwrap().parse::<f32>().unwrap();
