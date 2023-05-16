@@ -1,3 +1,4 @@
+use nalgebra::Vector3;
 use crate::xyzerrors::ParseXYZError;
 
 use super::numeric::XYZLineNumeric;
@@ -11,7 +12,7 @@ pub struct XYZLineSymbol {
     /// The symbol
     pub symbol: String,
     /// The coordinate triple
-    pub xyz: (f32, f32, f32),
+    pub xyz: Vector3<f32>,
 }
 
 
@@ -32,7 +33,7 @@ impl XYZLineSymbol {
         let z = split_line.next().unwrap().parse::<f32>()?;
         Ok(Self{
             symbol,
-            xyz: (x, y, z),
+            xyz: Vector3::new(x, y, z),
         })
     }
 }
@@ -46,7 +47,7 @@ impl From<String> for XYZLineSymbol {
         let z = split_line.next().unwrap().parse::<f32>().unwrap();
         Self{
             symbol,
-            xyz: (x, y, z),
+            xyz: Vector3::new(x, y, z),
         }
     }
 
