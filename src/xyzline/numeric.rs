@@ -1,4 +1,4 @@
-use nalgebra::Vector3;
+use nalgebra::Point3;
 use crate::xyzerrors::ParseXYZError;
 
 use super::symbol::XYZLineSymbol;
@@ -7,7 +7,7 @@ use super::symbol::PSE_SYMBOLS;
 #[derive(Debug)]
 pub struct XYZLineNumeric {
     pub z_value: usize,
-    pub xyz: Vector3<f32>,
+    pub xyz: Point3<f32>,
 }
 
 impl XYZLineNumeric {
@@ -20,7 +20,7 @@ impl XYZLineNumeric {
         let z = split_line.next().unwrap().parse::<f32>()?;
         Ok(Self {
             z_value,
-            xyz: Vector3::new(x, y, z)
+            xyz: Point3::new(x, y, z)
         })
     }
 }
@@ -43,7 +43,7 @@ impl From<String> for XYZLineNumeric {
         let z = split_line.next().unwrap().parse::<f32>().unwrap();
         Self {
             z_value,
-            xyz: Vector3::new(x, y, z),
+            xyz: Point3::new(x, y, z),
         }
     }
 }

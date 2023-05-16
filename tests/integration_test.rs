@@ -4,7 +4,7 @@ mod tests {
     use crate::file_setup;
     use qc_file_parsers::xyzline::symbol::XYZLineSymbol;
     use qc_file_parsers::{Xyz, XyzLine};
-    use nalgebra::Vector3;
+    use nalgebra::Point3;
     #[test]
     fn test_symbolic_constructor() {
         let mut test_file = file_setup::setup_allene_symbolic().unwrap();
@@ -14,7 +14,7 @@ mod tests {
         assert_eq!(
             XyzLine::Symbolic(XYZLineSymbol {
                 symbol: "H".to_string(),
-                xyz: Vector3::new(3.495_993_1_f32, 1.157_216_1_f32, 0.732_509_9_f32)
+                xyz: Point3::new(3.495_993_1_f32, 1.157_216_1_f32, 0.732_509_9_f32)
             }),
             test_parsed.lines[3]
         );
@@ -28,7 +28,7 @@ mod tests {
         assert_eq!(
             XyzLine::Numeric(qc_file_parsers::xyzline::numeric::XYZLineNumeric {
                 z_value: 8,
-                xyz: Vector3::new(1.899_115_9_f32, 0.0_f32, 4.139_062_4_f32)
+                xyz: Point3::new(1.899_115_9_f32, 0.0_f32, 4.139_062_4_f32)
             }),
             test_parsed.lines[2]
         );
