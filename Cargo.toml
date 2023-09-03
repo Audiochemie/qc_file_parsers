@@ -2,6 +2,8 @@
 name = "qc_file_parsers"
 version = "0.2.2"
 edition = "2021"
+license = "MIT"
+description = "A crate providing libraries for parsing file formats used in computation chemistry."
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
