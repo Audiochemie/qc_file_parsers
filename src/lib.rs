@@ -5,6 +5,8 @@ use xyzline::{numeric::XYZLineNumeric, symbol::XYZLineSymbol};
 pub mod xyzerrors;
 pub mod xyzline;
 
+/// Enum to wrap lines in a xyz file starting with a numeric or a symbolic line, i.e. either
+/// element symbol or atomic number.
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum XyzLine {
     Symbolic(xyzline::symbol::XYZLineSymbol),
@@ -26,6 +28,25 @@ pub struct Xyz {
 }
 
 impl Xyz {
+    /// Constructor for an Xyz structu.
+    /// # Arguments:
+    /// * `file_handle` - A handle to a `BufReader`, i.e. the xyz file.
+    ///  * `distances_in` - The unit in which the components of the xyz-vectors are given. 'bohr' ===
+    ///  `bohr`or 'angstroem' === `ang`
+    ///  
+    ///  # Example:
+    ///
+    /// ```no_run
+    ///  use std::fs::File;
+    ///  use std::io::BufReader;
+    ///  use qc_file_parsers::Xyz;
+    ///  fn main() -> std::io::Result<()> {
+    ///     let f = File::open("test_file.xyz")?;
+    ///     let mut b = BufReader::new(f);
+    ///     let x = Xyz::new(&mut b, "ang");
+    ///     Ok(())
+    ///  }
+    ///  ```
     pub fn new<I: BufRead>(
         file_handle: &mut I,
         distances_in: &str,
