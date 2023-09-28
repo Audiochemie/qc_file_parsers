@@ -2,8 +2,8 @@ mod file_setup;
 #[cfg(test)]
 mod tests {
     use crate::file_setup;
-    use qc_file_parsers::xyzline::symbol::XYZLineSymbol;
-    use qc_file_parsers::{Xyz, XyzLine};
+    use qc_file_parsers::xyz::xyzline::symbol::XYZLineSymbol;
+    use qc_file_parsers::xyz::{Xyz, XyzLine};
     use nalgebra::Point3;
     #[test]
     fn test_symbolic_constructor() {
@@ -26,7 +26,7 @@ mod tests {
         assert_eq!(test_parsed.number_of_atoms, 7);
         assert!(test_parsed.info_line.is_empty());
         assert_eq!(
-            XyzLine::Numeric(qc_file_parsers::xyzline::numeric::XYZLineNumeric {
+            XyzLine::Numeric(qc_file_parsers::xyz::xyzline::numeric::XYZLineNumeric {
                 z_value: 8,
                 xyz: Point3::new(1.899_115_9_f32, 0.0_f32, 4.139_062_4_f32)
             }),

@@ -1,5 +1,5 @@
 use nalgebra::Point3;
-use crate::xyzerrors::ParseXYZError;
+use crate::xyz::xyzerrors::ParseXYZError;
 
 use super::numeric::XYZLineNumeric;
 
