@@ -2,19 +2,31 @@ pub mod xyzerrors;
 pub mod xyzline;
 
 use crate::xyz::xyzline::{numeric::XYZLineNumeric, symbol::XYZLineSymbol};
+use crate::IsFloat;
+use std::cmp::PartialEq;
+use std::fmt::Debug;
 use std::io::BufRead;
+use std::str::FromStr;
 
 /// Enum to wrap lines in a xyz file starting with a numeric or a symbolic line, i.e. either
 /// element symbol or atomic number.
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub enum XyzLine {
-    Symbolic(xyzline::symbol::XYZLineSymbol),
-    Numeric(xyzline::numeric::XYZLineNumeric),
+pub enum XyzLine<T>
+where
+    T: IsFloat + Debug + PartialEq + Clone + FromStr +'static,
+    <T as FromStr>::Err: Debug,
+{
+    Symbolic(xyzline::symbol::XYZLineSymbol<T>),
+    Numeric(xyzline::numeric::XYZLineNumeric<T>),
 }
 
 ///Represents an xyz file.
 #[derive(Debug)]
-pub struct Xyz {
+pub struct Xyz<T>
+where
+    T: IsFloat + Debug + PartialEq + Clone + FromStr +'static,
+    <T as FromStr>::Err: Debug,
+{
     /// This file format needs to start with the number of atoms.
     pub number_of_atoms: usize,
     /// The vectors given as cartesian triples can either have length in bohr or in angstroem
@@ -23,10 +35,14 @@ pub struct Xyz {
     pub info_line: String,
     /// The lines can either start/end with an element symbol or its Z-value, followed by
     /// coordinate triples.
-    pub lines: Vec<XyzLine>,
+    pub lines: Vec<XyzLine<T>>,
 }
 
-impl Xyz {
+impl<T> Xyz<T>
+where
+    T: IsFloat + Debug + PartialEq + Clone + FromStr +'static,
+    <T as FromStr>::Err: Debug,
+{
     /// Constructor for an Xyz structu.
     /// # Arguments:
     /// * `file_handle` - A handle to a `BufReader`, i.e. the xyz file.
@@ -42,7 +58,7 @@ impl Xyz {
     ///  fn main() -> std::io::Result<()> {
     ///     let f = File::open("test_file.xyz")?;
     ///     let mut b = BufReader::new(f);
-    ///     let x = Xyz::new(&mut b, "ang");
+    ///     let x: Xyz<f32> = Xyz::new(&mut b, "ang").unwrap();
     ///     Ok(())
     ///  }
     ///  ```
@@ -58,7 +74,7 @@ impl Xyz {
             .parse::<usize>()?;
         let info_line = line_iter.next().unwrap().unwrap();
         let which_format = line_iter.next().unwrap().unwrap();
-        let mut lines: Vec<XyzLine> = Vec::new();
+        let mut lines: Vec<XyzLine<T>> = Vec::new();
         match XYZLineNumeric::new(which_format.clone()) {
             Ok(o) => {
                 lines.push(XyzLine::Numeric(o));
