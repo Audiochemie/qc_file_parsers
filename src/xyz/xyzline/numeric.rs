@@ -1,18 +1,15 @@
-use crate::{xyz::xyzerrors::ParseXYZError, IsFloat};
+use crate::xyz::xyzerrors::ParseXYZError;
 use nalgebra::Point3;
+use num::Float;
 
 use super::symbol::XYZLineSymbol;
 use super::symbol::PSE_SYMBOLS;
 
-use std::cmp::PartialEq;
-use std::fmt::Debug;
-use std::str::FromStr;
-
 #[derive(Debug, Clone)]
 pub struct XYZLineNumeric<T>
 where
-    T: IsFloat + Debug + PartialEq + Clone + FromStr + 'static,
-    <T as FromStr>::Err: Debug
+    T: Float + std::fmt::Debug + std::str::FromStr + 'static,
+    <T as std::str::FromStr>::Err: std::fmt::Debug
 {
     pub z_value: usize,
     pub xyz: Point3<T>,
@@ -20,8 +17,8 @@ where
 
 impl<T> XYZLineNumeric<T>
 where
-    T: IsFloat + Debug + PartialEq + Clone + FromStr + 'static,
-    <T as FromStr>::Err: Debug
+    T: Float + std::fmt::Debug + std::str::FromStr + 'static,
+    <T as std::str::FromStr>::Err: std::fmt::Debug
 {
     pub fn new(line: String) -> Result<Self, ParseXYZError> {
         // First we split the string by white spaces.
@@ -39,8 +36,8 @@ where
 
 impl<T> PartialEq for XYZLineNumeric<T>
 where
-    T: IsFloat + Debug + PartialEq + Clone + FromStr + 'static,
-    <T as FromStr>::Err: Debug
+    T: Float + std::fmt::Debug + std::str::FromStr + 'static,
+    <T as std::str::FromStr>::Err: std::fmt::Debug
 {
     fn eq(&self, other: &Self) -> bool {
         (self.z_value == other.z_value) && (self.xyz == other.xyz)
@@ -49,15 +46,15 @@ where
 
 impl<T> Eq for XYZLineNumeric<T>
 where
-    T: IsFloat + Debug + PartialEq + Clone + FromStr + 'static,
-    <T as FromStr>::Err: Debug,
+    T: Float + std::fmt::Debug + std::str::FromStr + 'static,
+    <T as std::str::FromStr>::Err: std::fmt::Debug
 {
 }
 
 impl<T> From<String> for XYZLineNumeric<T>
 where
-    T: IsFloat + Debug + PartialEq + Clone + FromStr + 'static,
-    <T as FromStr>::Err: Debug,
+    T: Float + std::fmt::Debug + std::str::FromStr + 'static,
+    <T as std::str::FromStr>::Err: std::fmt::Debug
 {
     fn from(line: String) -> Self {
         // First we split the string by white spaces.
@@ -75,8 +72,8 @@ where
 
 impl<T> From<XYZLineSymbol<T>> for XYZLineNumeric<T>
 where
-    T: IsFloat + Debug + PartialEq + Clone + FromStr + 'static,
-    <T as FromStr>::Err: Debug,
+    T: Float + std::fmt::Debug + std::str::FromStr + 'static,
+    <T as std::str::FromStr>::Err: std::fmt::Debug
 {
     fn from(value: XYZLineSymbol<T>) -> Self {
         Self {

@@ -1,12 +1,13 @@
-use crate::{xyz::xyzerrors::ParseXYZError, IsFloat};
+use crate::xyz::xyzerrors::ParseXYZError;
 
 use nalgebra::Point3;
+use num::Float;
 
 use super::numeric::XYZLineNumeric;
 
 use std::fmt::Debug;
 use std::cmp::PartialEq;
-use std::str::FromStr;
+
 
 pub const PSE_SYMBOLS: [&str; 11] = ["", "h", "he", "li", "be", "b", "c", "n", "o", "f", "ne"];
 
@@ -16,8 +17,8 @@ pub const PSE_SYMBOLS: [&str; 11] = ["", "h", "he", "li", "be", "b", "c", "n", "
 #[derive(Debug, Clone)]
 pub struct XYZLineSymbol<T>
 where
-    T: IsFloat + Debug + PartialEq + Clone + FromStr +'static,
-    <T as FromStr>::Err: Debug,
+    T: Float + std::fmt::Debug + std::str::FromStr + 'static,
+    <T as std::str::FromStr>::Err: std::fmt::Debug
 {
     /// The symbol
     pub symbol: String,
@@ -27,21 +28,24 @@ where
 
 impl<T> PartialEq for XYZLineSymbol<T>
 where
-    T: IsFloat + Debug + PartialEq + Clone + FromStr +'static,
-    <T as FromStr>::Err: Debug,
+    T: Float + std::fmt::Debug + std::str::FromStr + 'static,
+    <T as std::str::FromStr>::Err: std::fmt::Debug
 {
     fn eq(&self, other: &Self) -> bool {
         self.symbol.eq(&other.symbol) && self.xyz.eq(&other.xyz)
     }
 }
 
-impl<T> Eq for XYZLineSymbol<T> where T: IsFloat + Debug + PartialEq + Clone + FromStr +'static, 
-    <T as FromStr>::Err: Debug, {}
+impl<T> Eq for XYZLineSymbol<T>
+where
+    T: Float + std::fmt::Debug + std::str::FromStr + 'static,
+    <T as std::str::FromStr>::Err: std::fmt::Debug
+{}
 
 impl<T> XYZLineSymbol<T>
 where
-    T: IsFloat + Debug + PartialEq + Clone + FromStr + 'static,
-    <T as FromStr>::Err: Debug,
+    T: Float + std::fmt::Debug + std::str::FromStr + 'static,
+    <T as std::str::FromStr>::Err: std::fmt::Debug
 {
     pub fn new(line: String) -> Result<Self, ParseXYZError> {
         let mut split_line = line.split_whitespace();
@@ -58,8 +62,8 @@ where
 
 impl<T> From<String> for XYZLineSymbol<T>
 where
-    T: IsFloat + Debug + PartialEq + Clone + FromStr + 'static,
-    <T as FromStr>::Err: Debug,
+    T: Float + std::fmt::Debug + std::str::FromStr + 'static,
+    <T as std::str::FromStr>::Err: std::fmt::Debug
 {
     fn from(value: String) -> Self {
         let mut split_line = value.split_whitespace();
@@ -76,8 +80,8 @@ where
 
 impl<T> From<XYZLineNumeric<T>> for XYZLineSymbol<T>
 where
-    T: IsFloat + Debug + PartialEq + Clone + FromStr +'static,
-    <T as FromStr>::Err: Debug,
+    T: Float + std::fmt::Debug + std::str::FromStr + 'static,
+    <T as std::str::FromStr>::Err: std::fmt::Debug
 {
     fn from(value: XYZLineNumeric<T>) -> Self {
         Self {

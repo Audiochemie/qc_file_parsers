@@ -1,20 +1,17 @@
+use std::io::BufRead;
+use num::Float;
 pub mod xyzerrors;
 pub mod xyzline;
 
 use crate::xyz::xyzline::{numeric::XYZLineNumeric, symbol::XYZLineSymbol};
-use crate::IsFloat;
-use std::cmp::PartialEq;
-use std::fmt::Debug;
-use std::io::BufRead;
-use std::str::FromStr;
 
 /// Enum to wrap lines in a xyz file starting with a numeric or a symbolic line, i.e. either
 /// element symbol or atomic number.
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum XyzLine<T>
 where
-    T: IsFloat + Debug + PartialEq + Clone + FromStr +'static,
-    <T as FromStr>::Err: Debug,
+    T: Float + std::fmt::Debug + std::str::FromStr + 'static,
+    <T as std::str::FromStr>::Err: std::fmt::Debug
 {
     Symbolic(xyzline::symbol::XYZLineSymbol<T>),
     Numeric(xyzline::numeric::XYZLineNumeric<T>),
@@ -24,8 +21,8 @@ where
 #[derive(Debug)]
 pub struct Xyz<T>
 where
-    T: IsFloat + Debug + PartialEq + Clone + FromStr +'static,
-    <T as FromStr>::Err: Debug,
+    T: Float + std::fmt::Debug + std::str::FromStr + 'static,
+    <T as std::str::FromStr>::Err: std::fmt::Debug
 {
     /// This file format needs to start with the number of atoms.
     pub number_of_atoms: usize,
@@ -40,8 +37,8 @@ where
 
 impl<T> Xyz<T>
 where
-    T: IsFloat + Debug + PartialEq + Clone + FromStr +'static,
-    <T as FromStr>::Err: Debug,
+    T: Float + std::fmt::Debug + std::str::FromStr + 'static,
+    <T as std::str::FromStr>::Err: std::fmt::Debug
 {
     /// Constructor for an Xyz structu.
     /// # Arguments:
