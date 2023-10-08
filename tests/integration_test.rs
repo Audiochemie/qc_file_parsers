@@ -13,7 +13,7 @@ mod tests {
         assert!(test_parsed.info_line.is_empty());
         assert_eq!(
             XyzLine::Symbolic(XYZLineSymbol {
-                symbol: "H".to_string(),
+                symbol: "h".to_string(),
                 xyz: Point3::new(3.495_993_1_f32, 1.157_216_1_f32, 0.732_509_9_f32)
             }),
             test_parsed.lines[3]

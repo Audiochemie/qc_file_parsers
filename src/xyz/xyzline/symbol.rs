@@ -67,7 +67,7 @@ where
 {
     fn from(value: String) -> Self {
         let mut split_line = value.split_whitespace();
-        let symbol = split_line.next().unwrap().to_string();
+        let symbol = split_line.next().unwrap().to_string().to_lowercase();
         let x = split_line.next().unwrap().parse::<T>().unwrap();
         let y = split_line.next().unwrap().parse::<T>().unwrap();
         let z = split_line.next().unwrap().parse::<T>().unwrap();
