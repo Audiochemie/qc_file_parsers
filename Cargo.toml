@@ -1,6 +1,6 @@
 [package]
 name = "qc_file_parsers"
-version = "3.0.0"
+version = "3.1.0"
 edition = "2021"
 license = "MIT"
 description = "A crate providing libraries for parsing file formats used in computation chemistry."
