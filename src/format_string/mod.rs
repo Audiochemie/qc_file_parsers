@@ -8,14 +8,12 @@
 //! !c 10 floats with field length 8 three of them decimal places.
 //!     (3I5,1x,10F8.3)
 //! ```
-//!
-
-use std::str::FromStr;
+use std::{io::BufRead, num::ParseFloatError, str::FromStr};
 
 use self::frmtstngerror::ParseFortranFormattedError;
 pub mod frmtstngerror;
 
-/// Maps a Fortran format string.
+/// Maps a Fortran format string, which encodes the formatting of a single line in the file.
 #[derive(Debug, PartialEq, Eq)]
 pub struct FortranFormat {
     /// Number of repeat counts of the formatee, e.g. 5x <=> 5 white spaces
@@ -107,6 +105,30 @@ pub fn get_formats(sb: String) -> Result<Vec<FortranFormat>, ParseFortranFormatt
             },
         ))
     }
+}
+
+/// Function to parse a file, which has only uniform data, i.e. only one Fortran format string for
+/// the whole file.
+pub fn parse_file_uniform<I: BufRead>(fb: &mut I) -> Result<(), ParseFortranFormattedError> {
+    let mut sb = String::new();
+    fb.read_line(&mut sb).unwrap();
+    let format_string = get_formats(sb)?;
+    let mut l = String::new();
+    while let Ok(v) = fb.read_line(&mut l) {
+        // TODO Refactor. Ideally I want to have the possibility to
+        // preprocess the format string into a sequence of parse closures.
+        // Example:
+        // "(i3,3f12.8)" -> parse::<i32>(), parse::<f64> three times
+        for fmt in format_string {
+            if fmt.kind == *"f" {
+            } else if fmt.kind == *"i" {
+            } else if fmt.kind == *"a" {
+            } else if fmt.kind == *"a" {
+            }
+        }
+    }
+
+    Ok(())
 }
 
 #[cfg(test)]
