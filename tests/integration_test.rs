@@ -36,6 +36,7 @@ mod tests {
 
     #[test]
     fn test_fortran_format_string() {
-        let mut = test_file = file_setup::setup_acetaldehyde_fortran_format_string().unwrap();
+        let mut test_file = file_setup::setup_acetaldehyde_fortran_format_string().unwrap();
+        unimplemented!()
     }
 }
