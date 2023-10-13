@@ -2,9 +2,10 @@ mod file_setup;
 #[cfg(test)]
 mod tests {
     use crate::file_setup;
+    use nalgebra::Point3;
+    use qc_file_parsers::format_string::{parse_fortran_formatted_buf, ParsedValue};
     use qc_file_parsers::xyz::xyzline::symbol::XYZLineSymbol;
     use qc_file_parsers::xyz::{Xyz, XyzLine};
-    use nalgebra::Point3;
     #[test]
     fn test_symbolic_constructor() {
         let mut test_file = file_setup::setup_allene_symbolic().unwrap();
@@ -36,7 +37,56 @@ mod tests {
 
     #[test]
     fn test_fortran_format_string() {
-        let mut test_file = file_setup::setup_acetaldehyde_fortran_format_string().unwrap();
-        unimplemented!()
+        let mut test_file = file_setup::setup_allene_fortran_format_string().unwrap();
+        let test_parsed = parse_fortran_formatted_buf(&mut test_file).unwrap();
+        let expected = vec![
+            vec![ParsedValue::St("C".to_string())],
+            vec![
+                ParsedValue::Fl(0.0),
+                ParsedValue::Fl(0.0),
+                ParsedValue::Fl(1.889725988579),
+            ],
+            vec![ParsedValue::St("C".to_string())],
+            vec![
+                ParsedValue::Fl(2.551130084582),
+                ParsedValue::Fl(0.000000000000),
+                ParsedValue::Fl(1.889725988579),
+            ],
+            vec![ParsedValue::St("C".to_string())],
+            vec![
+                ParsedValue::Fl(-2.551130084582),
+                ParsedValue::Fl(0.000000000000),
+                ParsedValue::Fl(1.889725988579),
+            ],
+            vec![ParsedValue::St("H".to_string())],
+            vec![
+                ParsedValue::Fl(3.495993078871),
+                ParsedValue::Fl(1.157216106424),
+                ParsedValue::Fl(0.732509882155),
+            ],
+            vec![ParsedValue::St("H".to_string())],
+            vec![
+                ParsedValue::Fl(3.495993078871),
+                ParsedValue::Fl(-1.157216106424),
+                ParsedValue::Fl(3.046942095003),
+            ],
+            vec![ParsedValue::St("H".to_string())],
+            vec![
+                ParsedValue::Fl(-3.495993078871),
+                ParsedValue::Fl(-1.157216106424),
+                ParsedValue::Fl(0.732509882155),
+            ],
+            vec![ParsedValue::St("H".to_string())],
+            vec![
+                ParsedValue::Fl(-3.495993078871),
+                ParsedValue::Fl(1.157216106424),
+                ParsedValue::Fl(3.046942095003),
+            ],
+        ];
+        println!("{:?}", test_parsed);
+        assert_eq!(test_parsed.len(), expected.len());
+        for (p, e) in test_parsed.iter().zip(expected.iter()) {
+            assert_eq!(p, e)
+        }
     }
 }

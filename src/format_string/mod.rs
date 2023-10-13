@@ -1,9 +1,7 @@
 //! This module implements functions to read files, which begin with a
 //! Fortran formatting string.
 //! A detailed explanation can be found in Chapter 11
-//! [here](https://doi.org/10.1093/oso/9780198811893.001.0001)
-//!
-//! ```Fortran
+//! [here](https://doi.org/10.1093/oso/9780198811893.001.0001) ```Fortran
 //! !c three integers with field length 5, one white space,
 //! !c 10 floats with field length 8 three of them decimal places.
 //!     (3I5,1x,10F8.3)
@@ -64,8 +62,8 @@ impl FromStr for FortranFormat {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut chiterator = s.chars();
         let i_kind: usize = chiterator.position(|c| c.is_alphabetic()).unwrap();
-        let rep = s.get(..i_kind).unwrap().parse::<usize>().unwrap_or(0);
-        let kind = s.get(i_kind..=i_kind).unwrap().to_string();
+        let rep = s.get(..i_kind).unwrap().parse::<usize>().unwrap_or(1);
+        let kind = s.get(i_kind..=i_kind).unwrap().to_lowercase().to_string();
         let (fw, suffix): (usize, usize);
         let left = s.get(i_kind + 1..).unwrap().to_string();
         if left.is_empty() {
@@ -137,30 +135,27 @@ pub fn parse_fortran_formatted_buf<I: BufRead>(
     let mut line_buffer = f_ff.lines().map(|l| l.unwrap());
     // MUST be the Fortran Format string.
     let ff: Vec<FortranFormat> = get_formats(line_buffer.next().unwrap())?;
-    let tuple_len: usize = ff.iter().fold(0, |acc, f| acc + f.rep);
+    // let tuple_len: usize = ff.iter().fold(0, |acc, f| acc + f.rep);
     let mut result_data: Vec<Vec<ParsedValue>> = Vec::new();
     for l in line_buffer {
         let mut start: usize = 0;
         for f in ff.iter() {
             let slice_len = f.fw;
-            let mut to_push: Vec<ParsedValue> = Vec::with_capacity(tuple_len);
+            let mut to_push: Vec<ParsedValue> = Vec::with_capacity(f.rep);
             // TODO Refactor!!!
-            for _r in 0..f.rep {
+            for _r in 0..(f.rep) {
                 let parsed: ParsedValue;
-                let slice: String = l[start..slice_len].trim().to_string();
+                let slice: &str = l[start..start + slice_len].trim();
                 if f.kind == *"f" {
-                    if slice.is_empty() {
-                        panic!("{} is empty", slice);
-                    }
+                    println!("{}", slice);
                     parsed = ParsedValue::Fl(slice.parse::<f64>().unwrap());
                 } else if f.kind == *"i" {
                     parsed = ParsedValue::In(slice.parse::<i32>().unwrap());
                 } else if f.kind == *"a" {
-                    parsed = ParsedValue::St(slice.parse::<String>().unwrap());
+                    parsed = ParsedValue::St(slice.to_string());
                 } else {
-                    panic!("AAAHHHH!!");
+                    panic!("I do not know how to parse {}!!", f.kind);
                 }
-
                 to_push.push(parsed);
                 start += slice_len;
             }
@@ -201,7 +196,7 @@ mod unit_test {
         assert_eq!(expected, parsed);
         let test_string = "i4";
         let expected = FortranFormat {
-            rep: 0,
+            rep: 1,
             kind: "i".to_string(),
             fw: 4,
             suffix: 0,
@@ -224,9 +219,18 @@ mod unit_test {
         let test_string = "(i4,1x,3a,5f12.8)";
         let parsed = get_formats(test_string.to_string()).unwrap();
         let expected = vec![
-            FortranFormat::new(0, "i".to_string(), 4, 0),
+            FortranFormat::new(1, "i".to_string(), 4, 0),
             FortranFormat::new(1, "x".to_string(), 1, 0),
             FortranFormat::new(3, "a".to_string(), 1, 0),
+            FortranFormat::new(5, "f".to_string(), 12, 8),
+        ];
+        assert_eq!(parsed, expected);
+        let test_string = "(4i4,1x,a3,5f12.8)";
+        let parsed = get_formats(test_string.to_string()).unwrap();
+        let expected = vec![
+            FortranFormat::new(4, "i".to_string(), 4, 0),
+            FortranFormat::new(1, "x".to_string(), 1, 0),
+            FortranFormat::new(1, "a".to_string(), 3, 0),
             FortranFormat::new(5, "f".to_string(), 12, 8),
         ];
         assert_eq!(parsed, expected);
@@ -253,16 +257,19 @@ mod unit_test {
         let test_file = File::open("tests/test_file.dat").unwrap();
         let mut test_buffer = BufReader::new(test_file);
         let parsed = parse_fortran_formatted_buf(&mut test_buffer).unwrap();
-        let inner: Vec<ParsedValue> = vec![
-            ParsedValue::Fl(112.0_f64),
-            ParsedValue::Fl(113.0_f64),
-            ParsedValue::Fl(14.0_f64),
-            ParsedValue::Fl(15.0_f64),
-            ParsedValue::In(1234),
-            ParsedValue::In(567),
-            ParsedValue::In(9),
+        let expected: Vec<Vec<ParsedValue>> = vec![
+            vec![
+                ParsedValue::In(1234),
+                ParsedValue::In(567),
+                ParsedValue::In(9),
+            ],
+            vec![
+                ParsedValue::Fl(112.0_f64),
+                ParsedValue::Fl(113.0_f64),
+                ParsedValue::Fl(14.0_f64),
+                ParsedValue::Fl(5.0_f64),
+            ],
         ];
-        let expected: Vec<Vec<ParsedValue>> = vec![inner];
         for (p, e) in parsed.iter().zip(expected.iter()) {
             assert_eq!(p, e);
         }

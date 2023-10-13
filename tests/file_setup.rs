@@ -13,7 +13,7 @@ pub fn setup_acetaldehyde_numeric() -> Result<BufReader<File>> {
     Ok(BufReader::new(test_file))
 }
 
-pub fn setup_acetaldehyde_fortran_format_string() -> Result<BufReader<File>> {
-    let test_file = File::open("tests/test_acetaldehyde_Fortranformat.xyz")?;
+pub fn setup_allene_fortran_format_string() -> Result<BufReader<File>> {
+    let test_file = File::open("tests/test_allene_fortran_format.dat")?;
     Ok(BufReader::new(test_file))
 }
