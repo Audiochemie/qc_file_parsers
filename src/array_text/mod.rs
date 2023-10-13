@@ -4,6 +4,12 @@
 use nalgebra::DMatrix;
 use std::{io::BufRead, str::FromStr};
 
+/// Functio to parse a block of uniform data into a matrix.
+/// # Arguments
+///  * `source` - mutable reference of the file buffer.
+///  * `seperator` - Seperator of the datapoints.
+///  * `ncols` - Desired number of columns in target matrix.
+///  * `nrows` - Desired number of rows in target matrix.
 pub fn parse_text_into_matrix<I, T>(
     source: &mut I,
     separator: &str,

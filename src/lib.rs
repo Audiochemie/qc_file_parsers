@@ -1,3 +1,3 @@
 pub mod xyz;
 pub mod format_string;
-pub mod array;
+pub mod array_text;
