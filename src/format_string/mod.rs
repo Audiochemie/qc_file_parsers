@@ -126,6 +126,7 @@ pub enum ParsedValue {
     Lo(bool),
     St(String),
 }
+
 /// Function to parse a file with data formatted according to a given Fortran format string.
 /// # Arguments
 ///  * `f_ff` - File to process.
@@ -135,7 +136,6 @@ pub fn parse_fortran_formatted_buf<I: BufRead>(
     let mut line_buffer = f_ff.lines().map(|l| l.unwrap());
     // MUST be the Fortran Format string.
     let ff: Vec<FortranFormat> = get_formats(line_buffer.next().unwrap())?;
-    // let tuple_len: usize = ff.iter().fold(0, |acc, f| acc + f.rep);
     let mut result_data: Vec<Vec<ParsedValue>> = Vec::new();
     for l in line_buffer {
         let mut start: usize = 0;
@@ -147,7 +147,6 @@ pub fn parse_fortran_formatted_buf<I: BufRead>(
                 let parsed: ParsedValue;
                 let slice: &str = l[start..start + slice_len].trim();
                 if f.kind == *"f" {
-                    println!("{}", slice);
                     parsed = ParsedValue::Fl(slice.parse::<f64>().unwrap());
                 } else if f.kind == *"i" {
                     parsed = ParsedValue::In(slice.parse::<i32>().unwrap());
